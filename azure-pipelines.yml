@@ -8,24 +8,35 @@ pool:
 
 stages:
 - stage: Checkout
+  displayName: 'Checkout Stage'
   jobs:
   - job: CheckoutCode
+    displayName: 'Checkout Repository'
     steps:
     - checkout: self
 
 - stage: Deploy
+  displayName: 'Deploy Stage'
+  dependsOn: Checkout
   jobs:
   - job: DeployToVM
+    displayName: 'Deploy to VM via SSH'
     steps:
     - task: SSH@0
+      displayName: 'Clean Old Deployment and Fix Permissions'
       inputs:
         sshEndpoint: 'vm1-ssh-connection'
         runOptions: 'inline'
         inline: |
-          echo "Fixing permissions on /var/www/html..."
+          echo "Cleaning previous deployment..."
+          sudo rm -rf /var/www/html/todomvc
+          echo "Creating fresh deployment folder..."
+          sudo mkdir -p /var/www/html/todomvc
           sudo chown -R azureuser:azureuser /var/www/html
           sudo chmod -R 755 /var/www/html
+
     - task: CopyFilesOverSSH@0
+      displayName: 'Copy Fresh Todomvc Code to Target Directory'
       inputs:
         sshEndpoint: 'vm1-ssh-connection'
         sourceFolder: '$(Build.SourcesDirectory)'
