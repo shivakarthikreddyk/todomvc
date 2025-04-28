@@ -2,7 +2,9 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: Default
+  demands:
+    - Agent.Name -equals vm1-agent
 
 stages:
 - stage: Checkout
@@ -17,7 +19,7 @@ stages:
     steps:
     - task: CopyFilesOverSSH@0
       inputs:
-        sshEndpoint: 'vm1-ssh-connection'   # <-- Must match your SSH service connection name
+        sshEndpoint: 'vm1-ssh-connection'
         sourceFolder: '$(Build.SourcesDirectory)'
-        contents: '**'  # Copy everything
-        targetFolder: '/var/www/html/todomvc'  # Deploy inside /var/www/html/todomvc
+        contents: '**'
+        targetFolder: '/var/www/html/todomvc'
