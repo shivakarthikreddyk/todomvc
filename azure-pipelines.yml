@@ -17,6 +17,14 @@ stages:
   jobs:
   - job: DeployToVM
     steps:
+    - task: SSH@0
+      inputs:
+        sshEndpoint: 'vm1-ssh-connection'
+        runOptions: 'inline'
+        inline: |
+          echo "Fixing permissions on /var/www/html..."
+          sudo chown -R azureuser:azureuser /var/www/html
+          sudo chmod -R 755 /var/www/html
     - task: CopyFilesOverSSH@0
       inputs:
         sshEndpoint: 'vm1-ssh-connection'
