@@ -1,0 +1,23 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Checkout
+  jobs:
+  - job: CheckoutCode
+    steps:
+    - checkout: self
+
+- stage: Deploy
+  jobs:
+  - job: DeployToVM
+    steps:
+    - task: CopyFilesOverSSH@0
+      inputs:
+        sshEndpoint: 'vm1-ssh-connection'   # <-- Must match your SSH service connection name
+        sourceFolder: '$(Build.SourcesDirectory)'
+        contents: '**'  # Copy everything
+        targetFolder: '/var/www/html/todomvc'  # Deploy inside /var/www/html/todomvc
