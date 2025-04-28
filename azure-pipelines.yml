@@ -28,17 +28,16 @@ stages:
         sshEndpoint: 'vm1-ssh-connection'
         runOptions: 'inline'
         inline: |
-          echo "Cleaning previous deployment..."
-          sudo rm -rf /var/www/html/todomvc
-          echo "Creating fresh deployment folder..."
-          sudo mkdir -p /var/www/html/todomvc
+          echo "Cleaning /var/www/html..."
+          sudo rm -rf /var/www/html/*
+          echo "Fixing ownership and permissions..."
           sudo chown -R azureuser:azureuser /var/www/html
           sudo chmod -R 755 /var/www/html
 
     - task: CopyFilesOverSSH@0
-      displayName: 'Copy Fresh Todomvc Code to Target Directory'
+      displayName: 'Copy Todomvc Code to /var/www/html'
       inputs:
         sshEndpoint: 'vm1-ssh-connection'
         sourceFolder: '$(Build.SourcesDirectory)'
         contents: '**'
-        targetFolder: '/var/www/html/todomvc'
+        targetFolder: '/var/www/html'
